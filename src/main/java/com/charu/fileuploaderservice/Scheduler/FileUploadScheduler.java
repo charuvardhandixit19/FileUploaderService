@@ -4,16 +4,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.charu.fileuploaderservice.Services.FileService;
+ 
 @Component
 public class FileUploadScheduler {
      // To print logs....
     private static final Logger logger = LoggerFactory.getLogger(FileUploadScheduler.class);
+    @Autowired
+private FileService fileService;
     // function to pick files from input folder....
     @Scheduled(fixedDelay = 30000)
     public void scanInputFolder() {
@@ -35,7 +40,10 @@ public class FileUploadScheduler {
         for(File file:files){
             if(file.isFile()){
                 logger.info("The name of File is" + file.getName());
+                // moving file to processing folder
                 moveFile(file, processingFolderPath);
+                  // 2️⃣ Save metadata in DB
+                fileService.registerFile(file.getName(), processingFolderPath);
             }
         }
 
@@ -52,6 +60,7 @@ public class FileUploadScheduler {
         }catch(Exception e){
             logger.info(e.getMessage());
         }
+        
     }
 
 }
