@@ -6,7 +6,7 @@ import com.charu.fileuploaderservice.Enum.FileStatus;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "_data")
+@Table(name = "Parsed_data")
 @Getter
 @Setter
 @NoArgsConstructor
